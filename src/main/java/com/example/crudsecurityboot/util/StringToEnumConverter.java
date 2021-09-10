@@ -1,4 +1,4 @@
-package com.example.crudsecurityboot.model;
+package com.example.crudsecurityboot.util;
 
 import com.example.crudsecurityboot.model.Role;
 import org.springframework.context.annotation.Configuration;

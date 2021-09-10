@@ -1,11 +1,10 @@
 package com.example.crudsecurityboot.service;
 
-import com.example.crudsecurityboot.repository.RoleRepository;
+import com.example.crudsecurityboot.dao.UserDao;
 import com.example.crudsecurityboot.repository.UserRepository;
 import com.example.crudsecurityboot.model.Role;
 import com.example.crudsecurityboot.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.ConversionService;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,13 +13,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import java.util.*;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
+
+    private UserDao userDao;
+    @Autowired
+    public void DIUserDao(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     private UserRepository userRepository;
     @Autowired
@@ -28,26 +30,11 @@ public class UserServiceImpl implements UserService{
         this.userRepository = userRepository;
     }
 
-    private RoleRepository roleRepository;
-    @Autowired
-    public void DIRoleRepository(RoleRepository roleRepository) {
-        this.roleRepository = roleRepository;
-    }
-
-    private ConversionService conversionService;
-    @Autowired
-    public void DIConversionService(ConversionService conversionService) {
-        this.conversionService = conversionService;
-    }
-
     private PasswordEncoder passwordEncoder;
     @Autowired
     public void DIPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
     }
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Override
     public List<User> getAllUsers() {
@@ -66,30 +53,9 @@ public class UserServiceImpl implements UserService{
         return user = findUser.get();
     }
 
-
     @Override
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
-    }
-
-    @Override
-    public User getByName(String name) {
-        TypedQuery<User> query = entityManager.createQuery("select u from User u where u.name=:name" ,User.class);
-        query.setParameter("name", name);
-        return query.getResultList().stream().findAny().orElse(null);
-    }
-
-    @Override
-    public Role getByRole(String name) {
-        TypedQuery<Role> query = entityManager.createQuery("select r from Role r where r.name=:name", Role.class);
-        query.setParameter("name", name);
-        return query.getResultList().get(0);
-    }
-
-
-    @Override
-    public List<Role> getAllRoles() {
-        return entityManager.createQuery("select r from Role r", Role.class).getResultList();
     }
 
     @Override
@@ -114,9 +80,26 @@ public class UserServiceImpl implements UserService{
         for(Role role: user.getRoles()) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         }
-
         return new org.springframework.security.core.userdetails.
                 User(user.getUsername(), user.getPassword(), grantedAuthorities);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public User getByName(String name) {
+        return userDao.getByName(name);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public Role getByRole(String name) {
+        return userDao.getByRole(name);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public List<Role> getAllRoles() {
+        return userDao.getAllRoles();
     }
 
 }
