@@ -61,9 +61,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserAndRoles(User user, String[] roleList) {
         Set<Role> update = new HashSet<>();
-            for (int i =0; i<roleList.length; i++) {
-                if (!user.getRoles().contains(roleList[i])){
-
+            for (int i = 0; i < roleList.length; i++) {
+                if (!user.getRoles().contains(roleList[i])) {
                     update.add(getByRole(roleList[i]));
                 }
                 user.setRoles(update);
@@ -73,7 +72,7 @@ public class UserServiceImpl implements UserService {
         }
 
     @Override
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = getByName(name);
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
@@ -85,19 +84,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public User getByName(String name) {
         return userDao.getByName(name);
     }
 
     @Override
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public Role getByRole(String name) {
         return userDao.getByRole(name);
     }
 
     @Override
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     public List<Role> getAllRoles() {
         return userDao.getAllRoles();
     }

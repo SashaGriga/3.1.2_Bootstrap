@@ -17,12 +17,13 @@ public class Role implements GrantedAuthority {
     @Column
     private String name;
 
-    @ManyToMany( mappedBy = "roles")
+    @ManyToMany(mappedBy = "roles")
     private Set<User> users;
 
-    public Role() {}
+    public Role() {
+    }
 
-    public Role(String name){
+    public Role(String name) {
         this.name = name;
     }
 

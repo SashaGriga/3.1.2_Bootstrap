@@ -37,14 +37,14 @@ public class UserController {
     }
 
     @GetMapping("/addNewUser")
-    public String addNewUser (Model model) {
+    public String addNewUser(Model model) {
         model.addAttribute("roles", userService.getAllRoles());
         model.addAttribute("user", new User());
         return "addNewUser";
     }
 
     @PostMapping("/saveUser")
-    public String saveUser (@ModelAttribute("user") User user) {
+    public String saveUser(@ModelAttribute("user") User user) {
         userService.saveUser(user);
         return "redirect:/admin";
     }
