@@ -69,13 +69,13 @@ public class User implements UserDetails {
     }
 
     public void setRoles(Set<Role> roles) {
-       this.roles = roles;
+        this.roles = roles;
     }
 
     @Transient
     private String confirmPassword;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles;

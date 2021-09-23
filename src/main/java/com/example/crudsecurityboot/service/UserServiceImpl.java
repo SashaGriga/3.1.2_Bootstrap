@@ -19,18 +19,21 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+
     @Autowired
     public void DIUserDao(UserDao userDao) {
         this.userDao = userDao;
     }
 
     private UserRepository userRepository;
+
     @Autowired
     public void DIUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     public void DIPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -61,22 +64,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserAndRoles(User user, String[] roleList) {
         Set<Role> update = new HashSet<>();
-            for (int i = 0; i < roleList.length; i++) {
-                if (!user.getRoles().contains(roleList[i])) {
-                    update.add(getByRole(roleList[i]));
-                }
-                user.setRoles(update);
+        for (int i = 0; i < roleList.length; i++) {
+            if (!user.getRoles().contains(roleList[i])) {
+                update.add(getByRole(roleList[i]));
             }
+            user.setRoles(update);
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
-        }
+    }
 
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
         User user = getByName(name);
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        for(Role role: user.getRoles()) {
+        for (Role role : user.getRoles()) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getName()));
         }
         return new org.springframework.security.core.userdetails.

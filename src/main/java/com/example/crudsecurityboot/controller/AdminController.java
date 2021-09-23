@@ -11,13 +11,13 @@ import java.security.Principal;
 import java.util.List;
 
 @Controller
-public class UserController {
+public class AdminController {
 
     private final UserService userService;
 
     private final RoleRepository roleRepository;
 
-    public UserController(UserService userService, RoleRepository roleRepository) {
+    public AdminController(UserService userService, RoleRepository roleRepository) {
         this.userService = userService;
         this.roleRepository = roleRepository;
     }
@@ -30,9 +30,13 @@ public class UserController {
     }
 
     @GetMapping("/admin")
-    public  String showAllUser(Model model) {
+    public  String showAllUser(Model model, Principal principal) {
         List<User> allUs = userService.getAllUsers();
         model.addAttribute("allUs",allUs);
+        User u = (User) userService.getByName(principal.getName());
+        model.addAttribute("user", u);
+        model.addAttribute("roles", userService.getAllRoles());
+        model.addAttribute("new_user", new User());
         return "admin";
     }
 
@@ -63,7 +67,7 @@ public class UserController {
         return "redirect:/admin";
     }
 
-    @GetMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return "redirect:/admin";

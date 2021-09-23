@@ -33,10 +33,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.authorizeRequests()
-                .antMatchers("/").permitAll()
-                .antMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
-                .and().formLogin()
-                .successHandler(successUserHandler);
+            .antMatchers("/").permitAll()
+            .antMatchers("/admin").hasAnyAuthority("ROLE_ADMIN")
+            .and().formLogin()
+            .successHandler(successUserHandler);
     }
 
     @Bean
